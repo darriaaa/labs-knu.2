@@ -1,0 +1,65 @@
+// юнит.тесты1.cpp : юнит тесты для калькулятора
+//
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+int Sum(int a, int b) {
+ 
+    return a + b;
+}
+void TestSum() {
+    assert (Sum(2, 3) == 5);
+    assert (Sum(-2, -3) == -5);
+    assert (Sum(4, 4) == 8);
+
+    cout << "TestSumm +" << endl;
+
+}
+
+int Mines(int a, int b) {
+
+    return a - b;
+}
+void TestMines() {
+    assert(Mines(6, 3) == 3);
+    assert(Mines(-2, -3) == 1);
+    assert(Mines(4, 4) == 0);
+
+    cout << "TestMines +" << endl;
+
+}
+
+int Multiply(int a, int b) {
+
+    return a * b;
+}
+void TestMultiply() {
+    assert(Multiply(6, 3) == 18);
+    assert(Multiply(-2, -3) == 6);
+    assert(Multiply(4, 4) == 16);
+
+    cout << "TestMultiply +" << endl;
+
+}
+
+int Divide(int a, int b) {
+   
+    return a / b;
+}
+void TestDivide() {
+    assert(Divide(6, 3) == 2);
+    assert(Divide(-6, 2) == -3);
+    assert(Divide(4, 4) == 1);
+
+    cout << "TestDivide +" << endl;
+
+}
+
+int main() {
+    TestSum();
+    TestMines();
+    TestMultiply();
+    TestDivide();
+    return 0;
+}
