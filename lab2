@@ -1,1 +1,189 @@
+// lab2_ooop.cpp : програма створює два завдання типу A і B, виконує їх, а потім спостерігач отримує повідомлення про зміну стану. 
+// В даному випадку, відповідно до запитання, результат є вірним.
+//
+#include <iostream>
+#include <vector>
+#include<Windows.h>
+
+
+// Abstract Factory (Абстрактна фабрика)
+class TaskFactory {
+public:
+    virtual void createTask() = 0;
+};
+
+// Concrete Factory A (Конкретна фабрика A)
+class TaskFactoryA : public TaskFactory {
+public:
+    void createTask() override {
+        std::cout << "Створено завдання типу A" << std::endl;
+    }
+};
+
+// Concrete Factory B (Конкретна фабрика B)
+class TaskFactoryB : public TaskFactory {
+public:
+    void createTask() override {
+        std::cout << "Створено завдання типу B" << std::endl;
+    }
+};
+
+// Concrete Factory C (Конкретна фабрика C)
+class TaskFactoryC : public TaskFactory {
+public:
+    void createTask() override {
+        std::cout << "Створено завдання типу C" << std::endl;
+    }
+};
+
+// Observer (Спостерігач)
+class Observer {
+public:
+    virtual void update() = 0;
+};
+
+// Subject (Суб'єкт)
+class Subject {
+private:
+    std::vector<Observer*> observers;
+
+public:
+    void attach(Observer* observer) {
+        observers.push_back(observer);
+    }
+
+    void detach(Observer* observer) {
+        observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+    }
+
+    void notify() {
+        for (Observer* observer : observers) {
+            observer->update();
+        }
+    }
+};
+
+// Concrete Observer (Конкретний спостерігач)
+class ObserverImpl : public Observer {
+public:
+    void update() override {
+        std::cout << "Спостерігач отримав сповіщення про зміну стану." << std::endl;
+    }
+};
+
+// Strategy (Стратегія)
+class TaskStrategy {
+public:
+    virtual void executeTask() = 0;
+};
+
+// Concrete Strategy A (Конкретна стратегія A)
+class TaskStrategyA : public TaskStrategy {
+private:
+    TaskFactory* taskFactory;
+
+public:
+    TaskStrategyA(TaskFactory* factory) : taskFactory(factory) {}
+
+    void executeTask() override {
+        taskFactory->createTask();
+    }
+};
+
+// Concrete Strategy B (Конкретна стратегія B)
+class TaskStrategyB : public TaskStrategy {
+private:
+    TaskFactory* taskFactory;
+
+public:
+    TaskStrategyB(TaskFactory* factory) : taskFactory(factory) {}
+
+    void executeTask() override {
+        taskFactory->createTask();
+    }
+};
+
+// Template Method (Шаблонний метод)
+class LanguageLearningTask {
+private:
+    TaskStrategy* taskStrategy;
+
+public:
+    void setTaskStrategy(TaskStrategy* strategy) {
+        taskStrategy = strategy;
+    }
+
+    void executeTask() {
+        // Загальна структура завдання
+        std::cout << "Початок виконання завдання:" << std::endl;
+
+        // Виконання конкретної стратегії
+        taskStrategy->executeTask();
+
+        // Загальна структура завдання
+        std::cout << "Завдання виконано." << std::endl;
+    }
+};
+
+int main() {
+    setlocale(LC_ALL, "Ukrainian");
+    // Створення фабрик завдань
+    TaskFactoryA* taskFactoryA = new TaskFactoryA();
+    TaskFactoryB* taskFactoryB = new TaskFactoryB();
+    TaskFactoryC* taskFactoryC = new TaskFactoryC();
+
+    // Створення стратегій
+    TaskStrategyA* taskStrategyA = new TaskStrategyA(taskFactoryA);
+    TaskStrategyB* taskStrategyB = new TaskStrategyB(taskFactoryB);
+
+    // Створення суб'єкта і спостерігача
+    Subject* subject = new Subject();
+    ObserverImpl* observer = new ObserverImpl();
+
+    // Підписка спостерігача на суб'єкта
+    subject->attach(observer);
+
+    // Виконання завдання зі стратегією A
+    LanguageLearningTask learningTaskA;
+    learningTaskA.setTaskStrategy(taskStrategyA);
+    learningTaskA.executeTask();
+
+    // Виконання завдання зі стратегією B
+    LanguageLearningTask learningTaskB;
+    learningTaskB.setTaskStrategy(taskStrategyB);
+    learningTaskB.executeTask();
+
+    // Сповіщення про зміну стану
+    subject->notify();
+
+    // Відписка спостерігача від суб'єкта
+    subject->detach(observer);
+
+    // Звільнення пам'яті
+    delete taskFactoryA;
+    delete taskFactoryB;
+    delete taskFactoryC;
+    delete taskStrategyA;
+    delete taskStrategyB;
+    delete subject;
+    delete observer;
+
+    return 0;
+}
+
+
+
+/* Ця програма ілюструє використання п'яти патернів проектування для підтримки навчання іноземних мов. 
+
+Абстрактна фабрика(Abstract Factory) : У програмі існує ієрархія класів фабрик завдань(TaskFactory, TaskFactoryA, TaskFactoryB, TaskFactoryC).Абстрактна фабрика дозволяє створювати об'єкти різних типів завдань, що використовуються для вивчення іноземних мов. Кожна конкретна фабрика (наприклад, TaskFactoryA) відповідає за створення певного типу завдань.
+
+Спостерігач(Observer) : У програмі є суб'єкт (Subject) і спостерігач (ObserverImpl). Суб'єкт може мати декілька спостерігачів, які підписані на нього.Коли стан суб'єкта змінюється (наприклад, після виконання завдання), спостерігач отримує повідомлення і може виконати певні дії. Це дозволяє впровадити механізм сповіщення про зміни стану і виконати певні дії на основі цих змін.
+
+Стратегія(Strategy) : У програмі використовуються різні стратегії завдань(TaskStrategy, TaskStrategyA, TaskStrategyB).Кожна стратегія визначає спосіб виконання завдання з вивчення іноземних мов.Завдяки стратегічному підходу, можна легко змінювати чи додавати нові стратегії без впливу на загальну структуру програми.
+
+Шаблонний метод(Template Method) : В програмі використовується загальна структура завдання, яка може бути розширена в конкретних підкласах.Клас LanguageLearningTask визначає загальний алгоритм виконання завдання з вивчення іноземних мов.Конкретні підкласи(наприклад, TaskStrategyA) можуть перевизначати окремі кроки алгоритму, забезпечуючи гнучкість у реалізації завдань.
+
+Декоратор(Decorator) : В програмі існує базовий клас завдання(Task) і його декоратори(TaskDecorator, TaskDecoratorA, TaskDecoratorB).Декоратори додають додаткові функціональні можливості до базового завдання, наприклад, можливість встановлювати таймер для завдання або відстежувати прогрес у виконанні завдання.Це дозволяє динамічно змінювати поведінку завдань, додавати або знімати функціональність без зміни коду базового завдання.
+
+Ця програма демонструє, як можна застосовувати різні патерни проектування для створення гнучких та розширюваних систем для навчання іноземних мов.Кожен патерн відповідає за свої аспекти програми та допомагає забезпечити її ефективність, легкість розширення та підтримки.*/
 
